@@ -20,20 +20,20 @@ This repository contains a ROS 2 workspace for real-time control of a humanoid r
 ## Requirements
 
 - ROS 2 Humble (or your ROS 2 distro)
-- MoveIt 2
-- MoveIt Servo
-- Python 3
+- MoveIt 2 https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html
 
 ## How to Build
+
+Git clone the repo to your ROS2 workspace
 
 ```bash
 # Clone the repository
 git clone https://github.com/your_username/humanoid_moveit_servo_ws.git
-cd humanoid_moveit_servo_ws
-
-# Source ROS 2
-source /opt/ros/humble/setup.bash
 
 # Build workspace
 colcon build
 source install/setup.bash
+
+# Start the demo with keyboard operation
+ros2 launch my_moveit_servo humanoid_ros_api.launch.py
+ros2 run servo_keyboard_py humanoid_keyboard_servo
