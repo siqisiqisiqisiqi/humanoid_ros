@@ -1,0 +1,25 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: T170A
+    relative_path: urdf/T170A.urdf
+  srdf:
+    relative_path: config/T170A.srdf
+  package_settings:
+    author_name: Siqi Zheng
+    author_email: szheng2@clemson.edu
+    generated_timestamp: 1745517420
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

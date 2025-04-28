@@ -1,0 +1,24 @@
+# Default initial positions for T170A's ros2_control fake system
+
+initial_positions:
+  left_elbow_pitch: 0
+  left_elbow_yaw: 0
+  left_shoulder_pitch: 0
+  left_shoulder_roll: 0
+  left_wrist_pitch: 0
+  left_wrist_roll: 0
+  left_wrist_yaw: 0
+  # right_elbow_pitch: 0
+  # right_elbow_yaw: 0
+  # right_shoulder_pitch: 0
+  # right_shoulder_roll: 0
+  # right_wrist_pitch: 0
+  # right_wrist_roll: 0
+  # right_wrist_yaw: 0
+  right_elbow_pitch: 0.76
+  right_elbow_yaw: -0.1
+  right_shoulder_pitch: 1.02
+  right_shoulder_roll: -0.4
+  right_wrist_pitch: 0.25
+  right_wrist_roll: 0.8
+  right_wrist_yaw: 0
