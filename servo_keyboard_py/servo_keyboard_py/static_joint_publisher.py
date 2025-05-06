@@ -7,6 +7,8 @@ from sensor_msgs.msg import JointState
 class StaticJointPublisher(Node):
     def __init__(self):
         super().__init__('static_joint_publisher')
+        if not self.has_parameter('use_sim_time'):
+            self.declare_parameter('use_sim_time', False)
         self.pub = self.create_publisher(JointState, '/joint_states', 10)
         self.timer = self.create_timer(0.1, self.publish_joint_states)
 

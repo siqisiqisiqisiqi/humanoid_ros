@@ -32,69 +32,28 @@ def generate_launch_description():
     acceleration_filter_update_period = {"update_period": 0.01}
     planning_group_name = {"planning_group_name": "right_arm"}
 
-    # # publish the passive joint value
-    passive_joint_pub = launch_ros.actions.Node(
-        package="servo_keyboard_py",
-        executable="static_joint_publisher",
-        name="static_joint_publisher",
+    initial_pose_pub = launch_ros.actions.Node(
+        package="humanoid_control",
+        executable="initial_pose_publisher",
+        name="initial_pose_publisher",
         output="screen",
+        parameters=[{'use_sim_time': True}],
     )
 
-    # RViz
-    rviz_config_file = (
-        get_package_share_directory("my_moveit_servo")
-        + "/config/humanoid_servo.rviz"
-    )
-    rviz_node = launch_ros.actions.Node(
-        package="rviz2",
-        executable="rviz2",
-        name="rviz2",
-        output="log",
-        arguments=["-d", rviz_config_file],
-        parameters=[
-            moveit_config.robot_description,
-            moveit_config.robot_description_semantic,
-        ],
-    )
-
-    # ros2_control using FakeSystem as hardware
-    ros2_controllers_path = os.path.join(
-        get_package_share_directory("t170a_arm_moveit_config"),
-        "config",
-        "ros2_controllers.yaml",
-    )
-    ros2_control_node = launch_ros.actions.Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[ros2_controllers_path],
-        remappings=[
-            ("/controller_manager/robot_description", "/robot_description"),
-        ],
+    trajectory_to_jointstate_bridge_node = launch_ros.actions.Node(
+        package="humanoid_control",
+        executable="trajectory_to_jointstate_bridge",
+        name="trajectory_to_jointstate_bridge",
         output="screen",
+        parameters=[{'use_sim_time': True}],
     )
 
-    joint_state_broadcaster_spawner = launch_ros.actions.Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--controller-manager-timeout",
-            "300",
-            "--controller-manager",
-            "/controller_manager",
-        ],
-    )
-
-    right_arm_controller_spawner = launch_ros.actions.Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "right_arm_controller",  # must match ros2_controllers.yaml
-            "--controller-manager-timeout",
-            "300",
-            "--controller-manager",
-            "/controller_manager",
-        ],
+    joint_state_rate_adapter_node = launch_ros.actions.Node(
+        package="humanoid_control",
+        executable="joint_state_rate_adapter",
+        name="joint_state_rate_adapter",
+        output="screen",
+        # parameters=[{'use_sim_time': True}],
     )
 
     # Launch as much as possible in components
@@ -118,6 +77,7 @@ def generate_launch_description():
                     moveit_config.robot_description_semantic,
                     moveit_config.robot_description_kinematics,
                     moveit_config.joint_limits,
+                    # {"use_sim_time": True},
                 ],
                 condition=UnlessCondition(launch_as_standalone_node),
             ),
@@ -125,14 +85,18 @@ def generate_launch_description():
                 package="robot_state_publisher",
                 plugin="robot_state_publisher::RobotStatePublisher",
                 name="robot_state_publisher",
-                parameters=[moveit_config.robot_description],
+                parameters=[moveit_config.robot_description,
+                            # {"use_sim_time": True},
+                            ],
             ),
             launch_ros.descriptions.ComposableNode(
                 package="tf2_ros",
                 plugin="tf2_ros::StaticTransformBroadcasterNode",
                 name="static_tf2_broadcaster",
                 parameters=[
-                    {"child_frame_id": "/base_link", "frame_id": "/world"}],
+                    {"child_frame_id": "/base_link", "frame_id": "/world"},
+                    # {"use_sim_time": True},
+                ],
             ),
         ],
         output="screen",
@@ -159,11 +123,9 @@ def generate_launch_description():
 
     return launch.LaunchDescription(
         [
-            passive_joint_pub,
-            rviz_node,
-            ros2_control_node,
-            joint_state_broadcaster_spawner,
-            right_arm_controller_spawner,
+            trajectory_to_jointstate_bridge_node,
+            joint_state_rate_adapter_node,
+            initial_pose_pub,
             servo_node,
             container,
         ]

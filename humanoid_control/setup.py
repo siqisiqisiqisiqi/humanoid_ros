@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'servo_keyboard_py'
+package_name = 'humanoid_control'
 
 setup(
     name=package_name,
@@ -16,14 +16,16 @@ setup(
     maintainer='grail',
     maintainer_email='szheng2@g.clemson.edu',
     description='TODO: Package description',
-    license='TODO: License declaration',
+    license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'humanoid_keyboard_servo_data = servo_keyboard_py.keyboard_servo_humanoid_data:main',
-            'humanoid_keyboard_servo = servo_keyboard_py.keyboard_servo_humanoid:main',
-            'static_joint_publisher = servo_keyboard_py.static_joint_publisher:main',
-            'hand_joint_publisher = servo_keyboard_py.hand_joint_publisher:main',
+            'motor_control = humanoid_control.motor_control:main',
+            'slider_gui = humanoid_control.slider_gui:main',
+            'slider_gui_hand = humanoid_control.slider_gui_hand:main',
+            'trajectory_to_jointstate_bridge = humanoid_control.trajectory_to_jointstate_bridge:main',
+            'initial_pose_publisher = humanoid_control.initial_pose_publisher:main',
+            'joint_state_rate_adapter = humanoid_control.joint_state_rate_adapter:main',
         ],
     },
 )

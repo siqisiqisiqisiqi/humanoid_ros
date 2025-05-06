@@ -310,7 +310,7 @@
     <parent link="right_elbow_yaw_link" />
     <child link="right_elbow_pitch_link" />
     <axis xyz="0 0 1" />
-    <limit lower="0" upper="1.92" effort="34" velocity="3.87" />
+    <limit lower="0" upper="2.06" effort="34" velocity="3.87" />
   </joint>
   <link name="right_wrist_yaw_link">
     <inertial>
@@ -896,7 +896,7 @@
     <parent link="left_elbow_yaw_link" />
     <child link="left_elbow_pitch_link" />
     <axis xyz="0 0 1" />
-    <limit lower="-1.92" upper="0" effort="34" velocity="3.87" />
+    <limit lower="-2.06" upper="0" effort="34" velocity="3.87" />
   </joint>
   <link name="left_wrist_yaw_link">
     <inertial>

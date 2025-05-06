@@ -9,6 +9,7 @@ import sys
 import tty
 import termios
 import time
+from std_msgs.msg import Bool
 
 # Twist keys
 KEY_BINDINGS_TWIST = {
@@ -59,6 +60,7 @@ class ServoKeyboardNode(Node):
             TwistStamped, '/servo_node/delta_twist_cmds', 10)
         self.joint_pub = self.create_publisher(
             JointJog, '/servo_node/delta_joint_cmds', 10)
+        self.hand_pub = self.create_publisher(Bool, '/hand_state', 10)
 
         # Switch mode service
         self.cli = self.create_client(
@@ -67,13 +69,14 @@ class ServoKeyboardNode(Node):
             self.get_logger().info('Waiting for switch_command_type service...')
         self.req = ServoCommandType.Request()
 
+        self.hand_state = False
         self.command_type = 0  # Start in JOINT mode
         self.invert_joint_direction = False
         self.change_command_type(self.command_type)
 
         self.timer = self.create_timer(0.1, self.listen_keyboard)
         self.get_logger().info(
-            "Press 'j' for joint mode, 't' for twist mode, 'r' to invert joint direction.")
+            "Press 'j' for joint mode, 't' for twist mode, 'h' for hand configuration, 'r' to invert joint direction.")
 
     def change_command_type(self, new_type):
         self.req.command_type = new_type
@@ -108,6 +111,13 @@ class ServoKeyboardNode(Node):
         elif key == 'j':
             self.change_command_type(0)
             self.get_logger().info(f"Switched to joint mode.")
+        elif key == 'h':
+            msg = Bool()
+            msg.data = not self.hand_state  # or False
+            self.hand_pub.publish(msg)
+            self.hand_state = not self.hand_state
+            self.get_logger().info(f"Switch hand configuration.")
+            return
         elif key == 'r':
             self.invert_joint_direction = not self.invert_joint_direction
             self.get_logger().info(
@@ -122,6 +132,15 @@ class ServoKeyboardNode(Node):
             twist.header.frame_id = "base_link"
             setattr(getattr(twist.twist, cmd_type), axis, value)
             self.twist_pub.publish(twist)
+
+            time.sleep(0.3)
+
+            twist = TwistStamped()
+            twist.header.stamp = self.get_clock().now().to_msg()
+            twist.header.frame_id = "base_link"
+            setattr(getattr(twist.twist, cmd_type), axis, 0.0)
+            self.twist_pub.publish(twist)
+
             self.get_logger().info(f'Twist: {cmd_type} {axis} = {value}')
 
         # Joint mode
@@ -134,11 +153,18 @@ class ServoKeyboardNode(Node):
             jog.header.stamp = self.get_clock().now().to_msg()
             jog.joint_names = [joint_name]
             jog.velocities = [delta]
-            jog.duration = 1.0
-
+            jog.duration = 0.1
             self.joint_pub.publish(jog)
 
-            # self.joint_pub.publish(jog)
+            time.sleep(0.3)
+
+            jog = JointJog()
+            jog.header.stamp = self.get_clock().now().to_msg()
+            jog.joint_names = [joint_name]
+            jog.velocities = [0.0]
+            jog.duration = 0.1
+            self.joint_pub.publish(jog)
+
             self.get_logger().info(f'Joint: {joint_name} += {delta}')
 
         elif key == '\x03':  # Ctrl+C
