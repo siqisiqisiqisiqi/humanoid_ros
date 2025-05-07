@@ -40,5 +40,5 @@ ros2 run servo_keyboard_py humanoid_keyboard_servo
 ```
 
 ## Demo video (Teleoperation)
-<video src="./video_demo/successful_picking_video.mp4" controls width="600"></video>
+![Demo](./video_demo/successful_picking_video.gif)
 
