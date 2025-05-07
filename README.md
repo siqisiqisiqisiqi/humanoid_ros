@@ -37,3 +37,8 @@ source install/setup.bash
 # Start the demo with keyboard operation
 ros2 launch my_moveit_servo humanoid_ros_api.launch.py
 ros2 run servo_keyboard_py humanoid_keyboard_servo
+```
+
+## Demo video (Teleoperation)
+<video src="./video_demo/successful_picking_video.mp4" controls width="600"></video>
+
