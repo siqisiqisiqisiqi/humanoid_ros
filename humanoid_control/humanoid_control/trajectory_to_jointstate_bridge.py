@@ -6,6 +6,7 @@ from trajectory_msgs.msg import JointTrajectory
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Bool
 import threading
+from std_srvs.srv import Trigger
 import time
 
 
@@ -53,7 +54,7 @@ class TrajectoryToJointStateBridge(Node):
                 position = [0.0, 0.0, 0.0, 0.0, 1.2, 0.0]
                 velocity = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-            self.get_logger().info('This is a test to show the hand state publish!!!')
+            # self.get_logger().info('This is a test to show the hand state publish!!!')
             for name, pos, vel in zip(joint_name, position, velocity):
                 self.joint_states[name] = [pos, vel]
 
@@ -68,8 +69,8 @@ class TrajectoryToJointStateBridge(Node):
                 self.joint_states[name] = [pos, vel]
                 if vel != 0:
                     debug_flag = True
-            if debug_flag:
-                self.get_logger().info('This is a test to show the joint value updated!!!')
+            # if debug_flag:
+            #     self.get_logger().info('This is a test to show the joint value updated!!!')
 
     def publish_joint_command(self):
         with self.lock:

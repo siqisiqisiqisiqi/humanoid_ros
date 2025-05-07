@@ -40,7 +40,7 @@ class InitialPosePublisher(Node):
         msg.position = p1
         self.publisher.publish(msg)
         self.get_logger().info('Send the first pos!!!')
-        time.sleep(3)
+        time.sleep(2)
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.position = p2
         self.publisher.publish(msg)
